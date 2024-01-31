@@ -408,7 +408,7 @@ public class GameLogic implements PlayableLogic {
             } else if (o2.getNumber() != o1.getNumber()) {//אם מספר ההריגות שווה אז השוואה לפי קבוצה מנצחת
                 return Integer.compare(o1.getNumber(), o2.getNumber());
             } else
-                return Boolean.compare(o1.getOwner().getWinnow(), o2.getOwner().getWinnow());//בסוף השוואה לפי המספר של החייל
+                return Boolean.compare(o2.getOwner().getWinnow(), o1.getOwner().getWinnow());//בסוף השוואה לפי המספר של החייל
 
         }
     };
@@ -420,7 +420,7 @@ public class GameLogic implements PlayableLogic {
             } else if (o1.getNumber() != o2.getNumber()) {//אם המרחק שווה אז השוואה לפי המספר שלהם
                 return Integer.compare(o1.getNumber(), o2.getNumber());
             } else
-                return Boolean.compare(o1.getOwner().getWinnow(), o2.getOwner().getWinnow());//בסוף השוואה לפי מי ניצח עכשיו
+                return Boolean.compare(o2.getOwner().getWinnow(), o1.getOwner().getWinnow());//בסוף השוואה לפי מי ניצח עכשיו
         }
     };
     public Comparator<Position> PosComparator = new Comparator<Position>() {//השוואת פוזישנים
