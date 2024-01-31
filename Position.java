@@ -1,19 +1,21 @@
 import java.util.ArrayList;
 
-public  class Position {
-    public int x;
-    public int y;
-    public ArrayList<String> listS=new ArrayList<String>();
-    Position(int x,int y){
-        this.x=x;
-        this.y=y;
+public class Position {
+    private int x;
+    private int y;
+    private ArrayList<String> list_Pieces = new ArrayList<String>();//רשימה של כל החיילים שדרכו על הפוזישן
 
+    Position(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public int getX() {return x;}
+    public int getX() {
+        return this.x;
+    }
 
     public int getY() {
-        return y;
+        return this.y;
     }
 
     public void setX(int x) {
@@ -23,9 +25,18 @@ public  class Position {
     public void setY(int y) {
         this.y = y;
     }
-     public void addP(String st){
-        if(!listS.contains(st)){
-        this.listS.add(st);}
-     }
 
+    public void addP(String st) {
+        if (!this.list_Pieces.contains(st)) {
+            this.list_Pieces.add(st);
+        }
+    }
+
+    public ArrayList<String> getList_Pieces() {
+        return list_Pieces;
+    }
+
+    public void setList_Pieces(ArrayList<String> list_Pieces) {
+        this.list_Pieces = list_Pieces;
+    }
 }

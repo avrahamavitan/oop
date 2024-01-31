@@ -1,28 +1,25 @@
 public class ConcretePlayer  implements Player{
-
-    public boolean b1;
-    public int wins=0;
-    public ConcretePiece[] team;
-    public boolean win;
+    private  boolean isplayer1;
+    private int wins=0;
+    private ConcretePiece[] team;
+    private boolean winNow;
     ConcretePlayer(boolean b,ConcretePiece[] team){
         this.team=team;
-        this.b1=b;
+        this.isplayer1=b;
     }
     @Override
     public boolean isPlayerOne() {
-        return this.b1;
+        return this.isplayer1;
     }
     public void setWins(int win) {
-        wins+=win;
+        this.wins=win;
     }
     @Override
     public int getWins() {
-        return wins;
+        return this.wins;
     }
-    public ConcretePiece[]  getTeam() {
-        return team;
-    }
-    public void winNow(boolean b){
-        this.win=b;
-    }
+    public void setWinNow(boolean b){ this.winNow=b;}
+    public boolean getWinnow(){return this.winNow;}
+    public void set_team(int i, ConcretePiece piece){this.team[i]=piece;}
+    public ConcretePiece[] get_team(){return this.team;}
 }

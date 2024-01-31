@@ -1,20 +1,33 @@
-public class Pawn extends ConcretePiece{
+public class Pawn extends ConcretePiece {
 
-    ConcretePlayer player;
-    Pawn(ConcretePlayer player,int number,int x,int y){
-        super.setOwner(player);
-        this.player=player;
-        this.number=number;
-        this.startP.x=x;
-        this.startP.y=y;
-        this.addSteps(x,y);
-if(player.isPlayerOne()){
-    super.setType("♙");
-    this.name="D"+this.number;
-}
-else {super.setType("♟");
-    this.name="A"+this.number;
-}
+
+    private int kills;
+
+    Pawn(ConcretePlayer player, int number, int x, int y) {
+
+        this.setOwner(player);
+        this.setNumber(number);
+        this.setStartPx(x);
+        this.setStartPy(y);
+        this.addSteps(new Position(x,y));
+        if (player.isPlayerOne()) {
+            this.setType("♙");
+            this.setName("D" + this.getNumber());
+        } else {
+            this.setType("♟");
+            this.setName("A" + this.getNumber());
+        }
+    }
+    public void printkills() {
+        if (this.kills > 0) {
+            System.out.println(this.getName() + ": " + this.kills + " kills");
+        }
+    }
+    public void setKills(int kills) {
+        this.kills += kills;
     }
 
+    public int getKills() {
+        return kills;
+    }
 }

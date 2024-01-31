@@ -1,95 +1,111 @@
 import java.util.*;
 
 public class GameLogic implements PlayableLogic {
-    ConcretePiece[][] board = new ConcretePiece[11][11];
-    public ArrayList<Position> listP = new ArrayList<Position>();
-    public ConcretePiece[] team1 = new ConcretePiece[13];
-    public ConcretePiece[] team2 = new ConcretePiece[24];
-    ConcretePlayer player1 = new ConcretePlayer(true, team1);
-    ConcretePlayer player2 = new ConcretePlayer(false, team2);
-    boolean turn = false;
+    private ConcretePiece[][] board = new ConcretePiece[this.size][this.size];
+    private ArrayList<Position> listPosition = new ArrayList<Position>();//רשימה של כל הפוזישן שדרכו עליהם במשחק נתון
+    private ConcretePiece[] team1 = new ConcretePiece[13];//מערך של כל שחקני הקבוצה המגנה
+    private ConcretePiece[] team2 = new ConcretePiece[24];//מערך של כל שחקני הקבוצה התוקפת
+    private ConcretePlayer defens = new ConcretePlayer(true, team1);
+    private ConcretePlayer attack = new ConcretePlayer(false, team2);
+    private boolean turn = false;
+    final int size = 11;
 
     GameLogic() {
-        this.player1.team[0] = new Pawn(this.player1, 1, 5, 3);
-        this.player1.team[1] = new Pawn(this.player1, 2, 4, 4);
-        this.player1.team[2] = new Pawn(this.player1, 3, 5, 4);
-        this.player1.team[3] = new Pawn(this.player1, 4, 6, 4);
-        this.player1.team[4] = new Pawn(this.player1, 5, 3, 5);
-        this.player1.team[5] = new Pawn(this.player1, 6, 4, 5);
-        this.player1.team[6] = new King(this.player1, 7, 5, 5);
-        this.player1.team[7] = new Pawn(this.player1, 8, 6, 5);
-        this.player1.team[8] = new Pawn(this.player1, 9, 7, 5);
-        this.player1.team[9] = new Pawn(this.player1, 10, 4, 6);
-        this.player1.team[10] = new Pawn(this.player1, 11, 5, 6);
-        this.player1.team[11] = new Pawn(this.player1, 12, 6, 6);
-        this.player1.team[12] = new Pawn(this.player1, 13, 5, 7);
+
+        set_teams();//בניית מערכים המכילים את שתי הקבוצות
+        setBoard();//סידור הקבוצות על הלוח
+    }
+
+    void set_teams() {//בניית מערכים המכילים את שתי הקבוצות
+        this.defens.set_team(0, new Pawn(this.defens, 1, 5, 3));
+        this.defens.set_team(1, new Pawn(this.defens, 2, 4, 4));
+        this.defens.set_team(2, new Pawn(this.defens, 3, 5, 4));
+        this.defens.set_team(3, new Pawn(this.defens, 4, 6, 4));
+        this.defens.set_team(4, new Pawn(this.defens, 5, 3, 5));
+        this.defens.set_team(5, new Pawn(this.defens, 6, 4, 5));
+        this.defens.set_team(6, new King(this.defens, 7, 5, 5));
+        this.defens.set_team(7, new Pawn(this.defens, 8, 6, 5));
+        this.defens.set_team(8, new Pawn(this.defens, 9, 7, 5));
+        this.defens.set_team(9, new Pawn(this.defens, 10, 4, 6));
+        this.defens.set_team(10, new Pawn(this.defens, 11, 5, 6));
+        this.defens.set_team(11, new Pawn(this.defens, 12, 6, 6));
+        this.defens.set_team(12, new Pawn(this.defens, 13, 5, 7));
 
 
-        this.player2.team[0] = new Pawn(this.player2, 1, 3, 0);
-        this.player2.team[1] = new Pawn(this.player2, 2, 4, 0);
-        this.player2.team[2] = new Pawn(this.player2, 3, 5, 0);
-        this.player2.team[3] = new Pawn(this.player2, 4, 6, 0);
-        this.player2.team[4] = new Pawn(this.player2, 5, 7, 0);
-        this.player2.team[5] = new Pawn(this.player2, 6, 5, 1);
-        this.player2.team[6] = new Pawn(this.player2, 7, 0, 3);
-        this.player2.team[7] = new Pawn(this.player2, 9, 0, 4);
-        this.player2.team[8] = new Pawn(this.player2, 11, 0, 5);
-        this.player2.team[9] = new Pawn(this.player2, 15, 0, 6);
-        this.player2.team[10] = new Pawn(this.player2, 17, 0, 7);
-        this.player2.team[11] = new Pawn(this.player2, 12, 1, 5);
-        this.player2.team[12] = new Pawn(this.player2, 8, 10, 3);
-        this.player2.team[13] = new Pawn(this.player2, 10, 10, 4);
-        this.player2.team[14] = new Pawn(this.player2, 14, 10, 5);
-        this.player2.team[15] = new Pawn(this.player2, 16, 10, 6);
-        this.player2.team[16] = new Pawn(this.player2, 18, 10, 7);
-        this.player2.team[17] = new Pawn(this.player2, 13, 9, 5);
-        this.player2.team[18] = new Pawn(this.player2, 20, 3, 10);
-        this.player2.team[19] = new Pawn(this.player2, 21, 4, 10);
-        this.player2.team[20] = new Pawn(this.player2, 22, 5, 10);
-        this.player2.team[21] = new Pawn(this.player2, 23, 6, 10);
-        this.player2.team[22] = new Pawn(this.player2, 24, 7, 10);
-        this.player2.team[23] = new Pawn(this.player2, 19, 5, 9);
+        this.attack.set_team(0, new Pawn(this.attack, 1, 3, 0));
+        this.attack.set_team(1, new Pawn(this.attack, 2, 4, 0));
+        this.attack.set_team(2, new Pawn(this.attack, 3, 5, 0));
+        this.attack.set_team(3, new Pawn(this.attack, 4, 6, 0));
+        this.attack.set_team(4, new Pawn(this.attack, 5, 7, 0));
+        this.attack.set_team(5, new Pawn(this.attack, 6, 5, 1));
+        this.attack.set_team(6, new Pawn(this.attack, 7, 0, 3));
+        this.attack.set_team(7, new Pawn(this.attack, 9, 0, 4));
+        this.attack.set_team(8, new Pawn(this.attack, 11, 0, 5));
+        this.attack.set_team(9, new Pawn(this.attack, 15, 0, 6));
+        this.attack.set_team(10, new Pawn(this.attack, 17, 0, 7));
+        this.attack.set_team(11, new Pawn(this.attack, 12, 1, 5));
+        this.attack.set_team(12, new Pawn(this.attack, 8, 10, 3));
+        this.attack.set_team(13, new Pawn(this.attack, 10, 10, 4));
+        this.attack.set_team(14, new Pawn(this.attack, 14, 10, 5));
+        this.attack.set_team(15, new Pawn(this.attack, 16, 10, 6));
+        this.attack.set_team(16, new Pawn(this.attack, 18, 10, 7));
+        this.attack.set_team(17, new Pawn(this.attack, 13, 9, 5));
+        this.attack.set_team(18, new Pawn(this.attack, 20, 3, 10));
+        this.attack.set_team(19, new Pawn(this.attack, 21, 4, 10));
+        this.attack.set_team(20, new Pawn(this.attack, 22, 5, 10));
+        this.attack.set_team(21, new Pawn(this.attack, 23, 6, 10));
+        this.attack.set_team(22, new Pawn(this.attack, 24, 7, 10));
+        this.attack.set_team(23, new Pawn(this.attack, 19, 5, 9));
 
-        setBoard();
     }
 
     void setBoard() {
-        for (int i = 0; i < this.player1.team.length; i++) {
-            this.board[this.player1.team[i].startP.x][this.player1.team[i].startP.y] = this.player1.team[i];
-            Position p =new Position(player1.team[i].startP.x,player1.team[i].startP.y);
-            set_list(p);
+//סידור כל שחקני קבוצת player1 על הלוח והכנסת המיקומים שלהם לרשימת המיקומים שדרכו בהם שחקנים
+        for (int i = 0; i < this.defens.get_team().length; i++) {
+            this.board[this.defens.get_team()[i].getstartPx()][this.defens.get_team()[i].getstartPy()] = this.defens.get_team()[i];
+            Position p = new Position(defens.get_team()[i].getstartPx(), defens.get_team()[i].getstartPy());
+            set_listPosition(p);
         }
-        for (int i = 0; i < this.player2.team.length; i++) {
-            this.board[this.player2.team[i].startP.x][this.player2.team[i].startP.y] = this.player2.team[i];
-            Position p =new Position(player2.team[i].startP.x,player2.team[i].startP.y);
-            set_list(p);
+        //סידור כל שחקני קבוצת player2 על הלוח והכנסת המיקומים שלהם לרשימת המיקומים שדרכו בהם שחקנים
+        for (int i = 0; i < this.attack.get_team().length; i++) {
+            this.board[this.attack.get_team()[i].getstartPx()][this.attack.get_team()[i].getstartPy()] = this.attack.get_team()[i];
+            Position p = new Position(attack.get_team()[i].getstartPx(), attack.get_team()[i].getstartPy());
+            set_listPosition(p);
         }
+
     }
 
     @Override
     public boolean move(Position a, Position b) {
-        if (this.board[a.x][a.y].player.b1 == turn) {
-            if (this.board[b.x][b.y] == null) {
-                if (this.board[a.x][a.y].getType().equals("♔")) {
-                    if (((a.x == b.x) && column(a.x, a.y, b.y)) || ((a.y == b.y) && row(a.y, a.x, b.x))) {
-                        this.board[b.x][b.y] = this.board[a.x][a.y];
-                        this.board[a.x][a.y] = null;
-                        this.board[b.x][b.y].addSteps(b.x, b.y);
-                        set_list(b);
-                        turn = !(turn);
-                        isGameFinished();
-                        return true;
+        if (this.board[a.getX()][a.getY()].getOwner().isPlayerOne() == turn) {
+            if (this.board[b.getX()][b.getY()] == null) {
+                if (this.board[a.getX()][a.getY()].getType().equals("♔")) {//אם החייל שזז הוא מלך אז הוא יכול לזוז לכל מקום והוא לא יכול לאכול
+                    if (((a.getX() == b.getX()) && move_column(a.getX(), a.getY(), b.getY())) || ((a.getY() == b.getY()) && move_row(a.getY(), a.getX(), b.getX()))) {//בדיקה האם שתי המשבצות באותה שור/תור ואפשר לבצע תזוזה
+                        this.board[b.getX()][b.getY()] = this.board[a.getX()][a.getY()];//תזוזה של החייל אל b
+                        this.board[a.getX()][a.getY()] = null;//הפיכת  מיקום a לריק
+                        getPieceAtPosition(b).addSteps(b);//הוספת b בתור צעד שהחייל עשה
+                        set_listPosition(b);//הוספת b בתור משבצת שדרכו עליה
+                        turn = !(turn);//החלפת התור
+                        if (isGameFinished()) {
+                            print(defens, attack);
+                            defens.setWins(defens.getWins() + 1);
+                        }//בדיקה האם נגמר המשחק
+                        return true;//החזרת true כי המהלך היה תקין
                     }
-                } else if (!(b.x == 0 && b.y == 0) && !(b.x == 0 && b.y == 10) && !(b.x == 10 && b.y == 0) && !(b.x == 10 && b.y == 10)) {
-                    if (((a.x == b.x) && column(a.x, a.y, b.y)) || ((a.y == b.y) && row(a.y, a.x, b.x))) {
-                        this.board[b.x][b.y] = this.board[a.x][a.y];
-                        this.board[a.x][a.y] = null;
-                        this.board[b.x][b.y].addSteps(b.x, b.y);
-                        this.board[b.x][b.y].kills += kill(b);
-                        set_list(b);
-                        turn = !(turn);
-                        isGameFinished();
-                        return true;
+                } //אם החייל הוא לא מלך אז צריך לבדוק שהוא לא זז לפינות
+                else if (!(b.getX() == 0 && b.getY() == 0) && !(b.getX() == 0 && b.getY() == 10) && !(b.getX() == 10 && b.getY() == 0) && !(b.getX() == 10 && b.getY() == 10)) {
+                    if (((a.getX() == b.getX()) && move_column(a.getX(), a.getY(), b.getY())) || ((a.getY() == b.getY()) && move_row(a.getY(), a.getX(), b.getX()))) {//בדיקה האם הם באותה שורה/טור ואפשר לבצע תזוזה
+                        this.board[b.getX()][b.getY()] = this.board[a.getX()][a.getY()];//תזוזה של החייל לפוזישן b
+                        this.board[a.getX()][a.getY()] = null;//הפיכת a למקום ריק
+                        getPieceAtPosition(b).addSteps(b);//הוספת b לרשימת הצעדים שהחייל עשה
+                        ((Pawn) getPieceAtPosition(b)).setKills(kill(b));//קריאה לפונקצייה kill שבודקת האם החייל הרג חיילים אחרים ואם כן מוסיפה את הכמות למספר החיילים שהרג
+                        set_listPosition(b);//הוספת b לרשימת המשבצות שדרכו עליהן
+                        turn = !(turn);//החלפת תור
+                        if (isGameFinished()) {
+                            print(attack, defens);
+                            attack.setWins(attack.getWins() + 1);
+                        }//בדיקה האם נגמר המשחק
+                        return true;//החזרת true כי המהלך היה תקין
                     }
 
                 }
@@ -97,25 +113,27 @@ public class GameLogic implements PlayableLogic {
 
         }
 
-        return false;
+        return false;//אם השחקן לא זז אז מחזירים false כי המהלך לא היה תקין
     }
 
-    public void set_list(Position b) {
-        for (Position position : listP) {
-            if (b.x == position.x) {
-                if (b.y == position.y) {
-                    position.addP(this.board[b.x][b.y].name);
-                    break;
+    public void set_listPosition(Position b) {//הפונקצייה מוסיפה את המשבצות שדרכו עליהם במשך לתוך הרשימה
+        boolean found = false;
+        for (Position position : listPosition) {//בדיקה האם כבר קיית משבצת אם הנתוהים של b ברשימה
+            if (b.getX() == position.getX()) {
+                if (b.getY() == position.getY()) {
+                    position.addP(this.board[b.getX()][b.getY()].getName());
+                    found = true;
                 }
             }
         }
-        listP.add(b);
-        b.addP(this.board[b.x][b.y].name);
+        if (!found) {//אם b לא ברשימה
+            listPosition.add(b);//הוספה של b לרשימה}
+            b.addP(this.board[b.getX()][b.getY()].getName());//הוספה של החייל שדרך לתוך הרשימה של החיילים שדרכו על משבצת זו
+        }
     }
 
-    public boolean row(int y, int a, int b) {
-
-        for (int i = Math.min(a, b) + 1; i < Math.max(a, b); i++) {
+    public boolean move_row(int y, int x1, int x2) {//בדיקה האם לא נמצא אף חייל בטור זה
+        for (int i = Math.min(x1, x2) + 1; i < Math.max(x1, x2); i++) {
             if (this.board[i][y] != null) {
                 return false;
             }
@@ -123,9 +141,8 @@ public class GameLogic implements PlayableLogic {
         return true;
     }
 
-    public boolean column(int x, int a, int b) {
-
-        for (int i = Math.min(a, b) + 1; i < Math.max(a, b); i++) {
+    public boolean move_column(int x, int y1, int y2) {//בדיקה האם לא נמצא אף חייל בשורה זו
+        for (int i = Math.min(y1, y2) + 1; i < Math.max(y1, y2); i++) {
             if (this.board[x][i] != null) {
                 return false;
             }
@@ -133,157 +150,149 @@ public class GameLogic implements PlayableLogic {
         return true;
     }
 
-
     public int kill(Position p) {
         int num = 0;
-        if (p.y + 1 < 10 && this.board[p.x][p.y + 1] != null && !this.board[p.x][p.y + 1].getType().equals("♔")) {
-            if (board[p.x][p.y + 2] != null) {
-                Position p1 = new Position(p.x, p.y + 2);
-                num += kill2(p, p1);
-            }
-        } else if (p.y + 1 == 10 && this.board[p.x][p.y + 1] != null && !this.board[p.x][p.y + 1].getType().equals("♔")) {
-            if (this.board[p.x][p.y + 1] != null && this.board[p.x][p.y + 1].getOwner() != this.board[p.x][p.y].getOwner()) {
-                this.board[p.x][p.y + 1] = null;
-                num += 1;
-            }
+        //אכילה למטה
+        if (p.getY() + 1 < 10) {
+            num += kill_2pieces(p, 0, 1);
+        } else if (p.getY() + 1 == 10) {
+            num += kill_1pices(p, 0, 1);
         }
-        if (p.y - 1 > 0 && this.board[p.x][p.y - 1] != null && !this.board[p.x][p.y - 1].getType().equals("♔")) {
-            if (board[p.x][p.y - 2] != null) {
-                Position p2 = new Position(p.x, p.y - 2);
-                num += kill2(p2, p);
-            }
-        } else if (p.y - 1 == 0 && this.board[p.x][p.y - 1] != null && !this.board[p.x][p.y - 1].getType().equals("♔")) {
-            if (this.board[p.x][p.y - 1] != null && this.board[p.x][p.y - 1].getOwner() != this.board[p.x][p.y].getOwner()) {
-                this.board[p.x][p.y - 1] = null;
-                num += 1;
-            }
+//אכילה למעלה
+        if (p.getY() - 1 > 0) {
+            num += kill_2pieces(p, 0, -1);
+        } else if (p.getY() - 1 == 0) {
+            num += kill_1pices(p, 0, -1);
         }
-        if (p.x + 1 < 10 && this.board[p.x + 1][p.y] != null && !this.board[p.x + 1][p.y].getType().equals("♔")) {
-            if (board[p.x + 2][p.y] != null) {
-                Position p3 = new Position(p.x + 2, p.y);
-                num += kill1(p, p3);
-            }
-        } else if (p.x + 1 == 10 && this.board[p.x + 1][p.y] != null && !this.board[p.x + 1][p.y].getType().equals("♔")) {
-            if (this.board[p.x + 1][p.y] != null && this.board[p.x + 1][p.y].getOwner() != this.board[p.x][p.y].getOwner()) {
-                this.board[p.x + 1][p.y] = null;
-                num += 1;
-            }
+//אכילה ימינה
+        if (p.getX() + 1 < 10) {
+            num += kill_2pieces(p, 1, 0);
+        } else if (p.getX() + 1 == 10) {
+            num += kill_1pices(p, 1, 0);
         }
-        if (p.x - 1 > 0 && this.board[p.x - 1][p.y] != null && !this.board[p.x - 1][p.y].getType().equals("♔")) {
-            if (board[p.x - 2][p.y] != null) {
-                Position p4 = new Position(p.x - 2, p.y);
-                num += kill1(p4, p);
-            }
-        } else if (p.x - 1 == 0 && this.board[p.x - 1][p.y] != null && !this.board[p.x - 1][p.y].getType().equals("♔")) {
-            if (this.board[p.x - 1][p.y] != null && this.board[p.x - 1][p.y].getOwner() != this.board[p.x][p.y].getOwner()) {
-                this.board[p.x - 1][p.y] = null;
-                num += 1;
-            }
+//אכילה שמאלה
+        if (p.getX() - 1 > 0) {
+            num += kill_2pieces(p, -1, 0);
+        } else if (p.getX() - 1 == 0) {
+            num += kill_1pices(p, -1, 0);
         }
+//אכילה ליד הפינות שבהן אסור לדרוך פרט למלך
+        if ((p.getX() == 2 && p.getY() == 0) || (p.getX() == 2 && p.getY() == 10)) {
+            num += kill_1pices(p, -1, 0);
+        }
+        if ((p.getX() == 8 && p.getY() == 0) || (p.getX() == 8 && p.getY() == 10)) {
+            num += kill_1pices(p, 1, 0);
+        }
+        if ((p.getX() == 0 && p.getY() == 2) || (p.getX() == 10 && p.getY() == 2)) {
+            num += kill_1pices(p, 0, -1);
+        }
+        if ((p.getX() == 0 && p.getY() == 8) || (p.getX() == 10 && p.getY() == 8)) {
+            num += kill_1pices(p, 0, 1);
+        }
+        //num זה מספר האכילות שהשחקן ביצע
         return num;
 
     }
 
-    public int kill1(Position p1, Position p2) {
+    //פונקצייה המקבלת משבצת ובודקת האם השחקן שנמצא בה יכול לאכול.היא בודקת את כל האופציות במרכז הלוח של אכילה ע"י שתי שחקנים ואם כן מבצעת אכילה
+    public int kill_2pieces(Position p, int i, int j) {
+        if (this.board[p.getX() + i][p.getY() + j] != null) {
+            if (!this.board[p.getX() + i][p.getY() + j].getType().equals("♔")) {
+                if (this.board[p.getX() + i][p.getY() + j].getOwner() != this.board[p.getX()][p.getY()].getOwner()) {
+                    if (board[p.getX() + i * 2][p.getY() + j * 2] != null) {
+                        if (!board[p.getX() + i * 2][p.getY() + j * 2].getType().equals("♔")) {
+                            if (board[p.getX() + i * 2][p.getY() + j * 2].getOwner() == this.board[p.getX()][p.getY()].getOwner()) {
+                                this.board[p.getX() + i][p.getY() + j] = null;
 
-        if (!(this.board[p1.x][p1.y].getType().equals("♔")) && !(this.board[p2.x][p2.y].getType().equals("♔"))) {
-            if (this.board[p1.x][p1.y].getOwner() == board[p2.x][p2.y].getOwner()) {
-                if (this.board[p1.x + 1][p1.y] != null) {
-                    if (this.board[p1.x + 1][p1.y].getOwner() != this.board[p1.x][p1.y].getOwner()) {
-                        this.board[p1.x + 1][p1.y] = null;
-                        return 1;
+                                return 1;
+                            }
+                        }
                     }
                 }
             }
         }
-
         return 0;
     }
 
-    public int kill2(Position p1, Position p2) {
-
-        if (!(this.board[p1.x][p1.y].getType().equals("♔")) && !(this.board[p2.x][p2.y].getType().equals("♔"))) {
-            if (this.board[p1.x][p1.y].getOwner() == board[p2.x][p2.y].getOwner()) {
-                if (this.board[p1.x][p1.y + 1] != null) {
-                    if (this.board[p1.x][p1.y + 1].getOwner() != this.board[p1.x][p1.y].getOwner()) {
-                        this.board[p1.x][p1.y + 1] = null;
-                        return 1;
-                    }
+    //פונקצייה הבודקת האם שחקן יכול לאכול שחקן אחר בקצוות ואם כן מבצעת
+    public int kill_1pices(Position p, int i, int j) {
+        if (this.board[p.getX() + i][p.getY() + j] != null) {
+            if (!this.board[p.getX() + i][p.getY() + j].getType().equals("♔")) {
+                if (this.board[p.getX() + i][p.getY() + j].getOwner() != this.board[p.getX()][p.getY()].getOwner()) {
+                    this.board[p.getX() + i][p.getY() + j] = null;
+                    return 1;
                 }
             }
         }
-
         return 0;
     }
 
     @Override
-    public Piece getPieceAtPosition(Position position) {
-        return board[position.x][position.y];
+    public ConcretePiece getPieceAtPosition(Position position) {
+        return board[position.getX()][position.getY()];
     }
 
     @Override
-    public Player getFirstPlayer() {
-        return player2;
+    public ConcretePlayer getFirstPlayer() {
+        return defens;
     }
 
     @Override
-    public Player getSecondPlayer() {
-        return player1;
+    public ConcretePlayer getSecondPlayer() {
+        return attack;
     }
 
     @Override
     public boolean isGameFinished() {
-
-
-        int x=0;
-        int y=0;
-        for (int i = 0; i < 13; i++) {
-            if (player1.team[i].number == 7) {
-                x = player1.team[i].steps.get(player1.team[i].steps.size()-1).x;
-                y = player1.team[i].steps.get(player1.team[i].steps.size()-1).y;
+        int x = 0;
+        int y = 0;
+        for (int i = 0; i < this.defens.get_team().length; i++) {//מציאת המיקום האחרון של המלך
+            if (defens.get_team()[i].getNumber() == 7) {
+                x = defens.get_team()[i].geSteps().get(defens.get_team()[i].geSteps().size() - 1).getX();
+                y = defens.get_team()[i].geSteps().get(defens.get_team()[i].geSteps().size() - 1).getY();
             }
         }
-            if (this.board[x][y] != null && this.board[x][y].getType().equals("♔")) {
-                if (x == 0 && y == 0 || x == 0 && y == 10 || x == 10 && y == 0 || x == 10 && y == 10) {
-                    print(player1, player2);
-                    player2.winNow(true);
-                    player1.winNow(false);
-                   // reset();
-                    return true;
-                }
-                if (this.board[x][y] != null && this.board[x][y].getType().equals("♔")) {
-                    if (x - 1 > 0 && (this.board[x - 1][y] == null || this.board[x - 1][y].getOwner() == this.board[x][y].getOwner())) {
-                        return false;
-                    }
-                    if (y - 1 > 0 && (this.board[x][y - 1] == null || this.board[x][y - 1].getOwner() == this.board[x][y].getOwner())) {
-                        return false;
-                    }
-                    if (x + 1 < 11 && (this.board[x + 1][y] == null || this.board[x + 1][y].getOwner() == this.board[x][y].getOwner())) {
-                        return false;
-                    }
-                    if (y + 1 < 11 && (this.board[x][y + 1] == null || this.board[x][y + 1].getOwner() == this.board[x][y].getOwner())) {
-                        return false;
-                    }
-                    print(player2, player1);
-                    player1.winNow(true);
-                    player2.winNow(false);
-                  //  reset();
-                    return true;
-                }
+        //אם המלך נמצא באחת הפינות אז המגנים ניצחו
+        if (x == 0 && y == 0 || x == 0 && y == 10 || x == 10 && y == 0 || x == 10 && y == 10) {
+            // print(player1, player2);
+            defens.setWinNow(true);
+            attack.setWinNow(false);
+            // player1.setWins(player1.getWins() + 1);
+            return true;
+        } else {//בדיקה האם המלך מוקף מכל הכיוונים בשחקני האוייב .אם כן התוקפים ניצחו
+            if (x - 1 > 0 && (this.board[x - 1][y] == null || this.board[x - 1][y].getOwner() == this.board[x][y].getOwner())) {
+                return false;
             }
-        return false;
+            if (y - 1 > 0 && (this.board[x][y - 1] == null || this.board[x][y - 1].getOwner() == this.board[x][y].getOwner())) {
+                return false;
+            }
+            if (x + 1 < 11 && (this.board[x + 1][y] == null || this.board[x + 1][y].getOwner() == this.board[x][y].getOwner())) {
+                return false;
+            }
+            if (y + 1 < 11 && (this.board[x][y + 1] == null || this.board[x][y + 1].getOwner() == this.board[x][y].getOwner())) {
+                return false;
+            }
+            // print(player2, player1);
+            attack.setWinNow(true);
+            defens.setWinNow(false);
+
+            return true;
+
+        }
+
     }
 
     public void print(ConcretePlayer win, ConcretePlayer lose) {
-
-        Arrays.sort(win.team, historicStepsComparator);
-        for (int m = 0; m < win.team.length; m++) {
-            win.team[m].printSteps();
+        //מיו מערך הקבוצה המנצחת לפי מספר צעדים
+        Arrays.sort(win.get_team(), historicStepsComparator);
+        for (int m = 0; m < win.get_team().length; m++) {
+            win.get_team()[m].printSteps();
             ;
         }
-        Arrays.sort(lose.team, historicStepsComparator);
-        for (int n = 0; n < lose.team.length; n++) {
-            lose.team[n].printSteps();
+        //מיון מערך הקבוצה המפסידה לפי מספר צעדים והדפסה
+        Arrays.sort(lose.get_team(), historicStepsComparator);
+        for (int n = 0; n < lose.get_team().length; n++) {
+            lose.get_team()[n].printSteps();
             ;
         }
 
@@ -291,37 +300,45 @@ public class GameLogic implements PlayableLogic {
             System.out.print("*");
         }
         System.out.println();
-
-        ConcretePiece[] merge = new ConcretePiece[win.team.length + lose.team.length];
-        System.arraycopy(win.team, 0, merge, 0, win.team.length);
-        System.arraycopy(lose.team, 0, merge, win.team.length, lose.team.length);
+        //  בניית מערך רק של החיילים בלי המלך ומיון לפי כמות  kills
+        Pawn[] merge = new Pawn[defens.get_team().length + attack.get_team().length - 1];
+        int j = 0;
+        for (int i = 0; i < this.defens.get_team().length; i++) {
+            if (this.defens.get_team()[i].getNumber() != 7) {
+                merge[j] = (Pawn) this.defens.get_team()[i];
+                j++;
+            }
+        }
+        for (int i = 0; i < this.attack.get_team().length; i++) {
+            merge[i + this.defens.get_team().length - 1] = (Pawn) this.attack.get_team()[i];
+        }
         Arrays.sort(merge, killComparator);
-        for (ConcretePiece concretePiece : merge) {
-            concretePiece.printkills();
-            ;
+        for (int i = 0; i < merge.length; i++) {
+            merge[i].printkills();
         }
 
         for (int i = 0; i < 75; i++) {
             System.out.print("*");
         }
         System.out.println();
-
-        Arrays.sort(merge, distanceComparator);
-        for (ConcretePiece concretePiece : merge) {
-            concretePiece.printDistance();
-            ;
+        //בנית מערך של שתי הקבוצות כולל המלך ומיון לפי מרחק והדפסה
+        ConcretePiece[] merge2 = new ConcretePiece[win.get_team().length + lose.get_team().length];
+        System.arraycopy(win.get_team(), 0, merge2, 0, win.get_team().length);
+        System.arraycopy(lose.get_team(), 0, merge2, win.get_team().length, lose.get_team().length);
+        Arrays.sort(merge2, distanceComparator);
+        for (int i = 0; i < merge.length; i++) {
+            merge2[i].printDistance();
         }
 
         for (int i = 0; i < 75; i++) {
             System.out.print("*");
         }
         System.out.println();
-
-        listP.sort(PosComparator);
-
-        for (Position position : listP) {
-            if (position.listS.size() > 1) {
-                System.out.println("(" + position.x + ", " + position.y + ")" + position.listS.size() + " pieces");
+        //מיון כל המשבצות לפי כמות חיילים שונים שניו עליהם והדפסה
+        listPosition.sort(PosComparator);
+        for (int i = 0; i < listPosition.size(); i++) {
+            if (listPosition.get(i).getList_Pieces().size() > 1) {
+                System.out.println("(" + listPosition.get(i).getX() + ", " + listPosition.get(i).getY() + ")" + listPosition.get(i).getList_Pieces().size() + " pieces");
             }
         }
         for (int i = 0; i < 75; i++) {
@@ -337,56 +354,82 @@ public class GameLogic implements PlayableLogic {
 
     @Override
     public void reset() {
+        //מחיקת כל הלוח
         for (int i = 0; i < 11; i++) {
             for (int j = 0; j < 11; j++) {
                 this.board[i][j] = null;
             }
         }
+        //מחיקה לכל משבצת שדרכו עליה את הפרטים של מי שדרך עליה
+        for (int i = 0; i < listPosition.size(); i++) {
+            listPosition.get(i).getList_Pieces().clear();
+        }
+        //מחיקת מערך המשבצות שדרכו עליהם
+        listPosition.clear();
+        //מחיקת כל הצעדים שכל החיילים עשו
+        for (int i = 0; i < defens.get_team().length; i++) {
+            defens.get_team()[i].geSteps().clear();
+        }
+        for (int i = 0; i < attack.get_team().length; i++) {
+            attack.get_team()[i].geSteps().clear();
+        }
+        //סידור הלוח מחדש
         setBoard();
     }
 
     @Override
     public void undoLastMove() {
-
     }
+
 
     @Override
     public int getBoardSize() {
-        return 11;
+        return this.size;
     }
 
     public Comparator<ConcretePiece> historicStepsComparator = new Comparator<ConcretePiece>() {
-        @Override
+        @Override//השוואה בין חיילים לפי כמות הצעדים שצעדו
         public int compare(ConcretePiece o1, ConcretePiece o2) {
-            if (o2.steps.size() != o1.steps.size()) {return Integer.compare(o1.steps.size(), o2.steps.size());}
-            else if (o2.getOwner()==o1.getOwner()){return Integer.compare(o1.number,o2.number);}
-            else   return Boolean.compare(o1.getOwner().win,o2.getOwner().win);
-        }
-    };
-    public Comparator<ConcretePiece> killComparator = new Comparator<ConcretePiece>() {
-        @Override
-        public int compare(ConcretePiece o1, ConcretePiece o2) {
-            if (o2.kills != o1.kills) {return Integer.compare(o2.kills, o1.kills);}
-            else if (o2.getOwner()==o1.getOwner()){return Integer.compare(o2.number,o1.number);}
-                  else   return Boolean.compare(o2.getOwner().win,o1.getOwner().win);
+            if (o2.geSteps().size() != o1.geSteps().size()) {
+                return Integer.compare(o1.geSteps().size(), o2.geSteps().size());
+            } //אם המרחק שווה אז השוואה לפי מספר שחקן
+            else {
+                return Integer.compare(o1.getNumber(), o2.getNumber());
+            }
+
 
         }
     };
+    public Comparator<Pawn> killComparator = new Comparator<Pawn>() {
+        @Override//השוואה בין חיילים לפי מספר הריגות
+        public int compare(Pawn o1, Pawn o2) {
+            if (o2.getKills() != o1.getKills()) {
+                return Integer.compare(o2.getKills(), o1.getKills());
+            } else if (o2.getNumber() != o1.getNumber()) {//אם מספר ההריגות שווה אז השוואה לפי קבוצה מנצחת
+                return Integer.compare(o1.getNumber(), o2.getNumber());
+            } else
+                return Boolean.compare(o1.getOwner().getWinnow(), o2.getOwner().getWinnow());//בסוף השוואה לפי המספר של החייל
 
+        }
+    };
     public Comparator<ConcretePiece> distanceComparator = new Comparator<ConcretePiece>() {
-        @Override
+        @Override//השוואה בין חיילים לפי מרחק שצעדו
         public int compare(ConcretePiece o1, ConcretePiece o2) {
-            if (o1.distance() != o2.distance()) {return Integer.compare(o2.distance(), o1.distance());}
-            else if (o1.number==o2.number){return Boolean.compare(o2.getOwner().win,o1.getOwner().win);}
-               else return Integer.compare(o1.number,o2.number);
+            if (o1.distance() != o2.distance()) {
+                return Integer.compare(o2.distance(), o1.distance());
+            } else if (o1.getNumber() != o2.getNumber()) {//אם המרחק שווה אז השוואה לפי המספר שלהם
+                return Integer.compare(o1.getNumber(), o2.getNumber());
+            } else
+                return Boolean.compare(o1.getOwner().getWinnow(), o2.getOwner().getWinnow());//בסוף השוואה לפי מי ניצח עכשיו
         }
     };
-    public Comparator<Position> PosComparator = new Comparator<Position>() {
+    public Comparator<Position> PosComparator = new Comparator<Position>() {//השוואת פוזישנים
         public int compare(Position o1, Position o2) {
-            if(o1.listS.size()!=o2.listS.size()){
-            return Integer.compare(o2.listS.size(),o1.listS.size());}
-            else if(o1.x!=o2.x){return Integer.compare(o1.x,o2.x);}
-            else return Integer.compare(o1.y,o2.y);
+            if (o1.getList_Pieces().size() != o2.getList_Pieces().size()) {//השוואה לפי מספר הדריכות
+                return Integer.compare(o2.getList_Pieces().size(), o1.getList_Pieces().size());
+            } else if (o1.getX() != o2.getX()) {//אם מספר הדריכות שווה אז השוואה בין נקודת הx
+                return Integer.compare(o1.getX(), o2.getX());
+            } else return Integer.compare(o1.getY(), o2.getY());//אם גם נקודת הx שווה אז השוואה לפי הy
         }
 
     };
