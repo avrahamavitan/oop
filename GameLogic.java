@@ -302,7 +302,6 @@ public class GameLogic implements PlayableLogic {
         }
         System.out.println();
         //  בניית מערך רק של החיילים בלי המלך ומיון לפי כמות  kills
-        // Pawn[] merge = new Pawn[defens.get_team().length + attack.get_team().length - 1];
         int j = 0;
         for (int i = 0; i < this.defens.get_team().length; i++) {
             if (this.defens.get_team()[i].getNumber() != 7) {
