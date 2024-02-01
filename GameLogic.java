@@ -9,6 +9,7 @@ public class GameLogic implements PlayableLogic {
     private ConcretePlayer attack = new ConcretePlayer(false, team2);
     private boolean turn = false;
     final int size = 11;
+    Pawn[] merge = new Pawn[defens.get_team().length + attack.get_team().length - 1];
 
     GameLogic() {
 
@@ -301,7 +302,7 @@ public class GameLogic implements PlayableLogic {
         }
         System.out.println();
         //  בניית מערך רק של החיילים בלי המלך ומיון לפי כמות  kills
-        Pawn[] merge = new Pawn[defens.get_team().length + attack.get_team().length - 1];
+        // Pawn[] merge = new Pawn[defens.get_team().length + attack.get_team().length - 1];
         int j = 0;
         for (int i = 0; i < this.defens.get_team().length; i++) {
             if (this.defens.get_team()[i].getNumber() != 7) {
@@ -369,9 +370,15 @@ public class GameLogic implements PlayableLogic {
         //מחיקת כל הצעדים שכל החיילים עשו
         for (int i = 0; i < defens.get_team().length; i++) {
             defens.get_team()[i].geSteps().clear();
+            defens.get_team()[i].geSteps().add(defens.get_team()[i].getStartP());
+
         }
         for (int i = 0; i < attack.get_team().length; i++) {
             attack.get_team()[i].geSteps().clear();
+            attack.get_team()[i].geSteps().add(attack.get_team()[i].getStartP());
+        }
+        for (int i = 0; i < merge.length; i++) {
+            merge[i].setKills(0);
         }
         //סידור הלוח מחדש
         setBoard();
